@@ -21,7 +21,8 @@ import javax.swing.JPanel;
 /**
  * The main GUI for the weather console.
  * 
- * @author Group 6
+ * @author  Group 3
+ * @version February 15, 2020
  */
 public class WeatherGUI extends JFrame {
 	/**
@@ -144,17 +145,17 @@ public class WeatherGUI extends JFrame {
         
         JPanel timePanel = new JPanel();
         timePanel.setBorder(BorderFactory.createLineBorder(Color.black));
-        timeReadout = new JLabel("Time: --:--:-- a.m.");
+        timeReadout = new JLabel("Time: --:--:-- AM");
         timePanel.add(timeReadout);  
         
         JPanel sunrisePanel = new JPanel();
         sunrisePanel.setBorder(BorderFactory.createLineBorder(Color.black));
-        sunriseReadout = new JLabel("Sunrise: --:-- a.m.");
+        sunriseReadout = new JLabel("Sunrise: --:-- AM");
         sunrisePanel.add(sunriseReadout); 
         
         JPanel sunsetPanel = new JPanel();
         sunsetPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-        sunsetReadout = new JLabel("Sunset: --:-- p.m.");
+        sunsetReadout = new JLabel("Sunset: --:-- PM");
         sunsetPanel.add(sunsetReadout);
 
         JPanel northLayoutPanel = new JPanel();
@@ -274,9 +275,13 @@ public class WeatherGUI extends JFrame {
             ImageIcon resizedIcon = new ImageIcon(newImg);
             moonImages[i] = resizedIcon;
         }
-
-        moonReadout.setText(phases[moon]);
-        moonLabel.setIcon(moonImages[moon]);
+        
+        //Draw the moon phase and label only once
+        if (!moonReadout.isOpaque()) {
+        	moonReadout.setOpaque(true);
+        	moonReadout.setText(phases[moon]);
+        	moonLabel.setIcon(moonImages[moon]);
+        }
     }
     
     /**
@@ -306,22 +311,30 @@ public class WeatherGUI extends JFrame {
      * Set the current time
      * @param time The current time of day
      */
-    public void setTime(Date time) {
+    public void setTime(Date time, boolean updateTimeRecord) {
     	String raw = time.toString();
     	int timePeriod = Integer.valueOf(raw.substring(11, 13));
     	if (timePeriod < 12) {
     		if (timePeriod == 0) {
-    			timeReadout.setText("Time: 12" + raw.substring(13, 19) + " AM");
+    			raw = "12" + raw.substring(13, 19) + " AM";
+ //   			timeReadout.setText("Time: 12" + raw.substring(13, 19) + " AM");
     		} else {
-    			timeReadout.setText("Time: " + raw.substring(11, 19) + " AM");
+    			raw = raw.substring(11, 19) + " AM";
+ //   			timeReadout.setText("Time: " + raw.substring(11, 19) + " AM");
     		}
     	} else {
     		if (timePeriod == 12) {
-    			timeReadout.setText("Time: 12" + raw.substring(13, 19) + " PM");
+    			raw = "12" + raw.substring(13, 19) + " PM";
+//    			timeReadout.setText("Time: 12" + raw.substring(13, 19) + " PM");
     		} else {
-    			timeReadout.setText("Time: " + Integer.toString((timePeriod-12)) + raw.substring(13, 19) + " PM");
+    			raw = Integer.toString((timePeriod-12)) + raw.substring(13, 19) + " PM";
+ //   			timeReadout.setText("Time: " + Integer.toString((timePeriod-12)) + raw.substring(13, 19) + " PM");
     		}
     	}	
+    	timeReadout.setText("Time: " + raw);
+    	if (graphPanel != null && updateTimeRecord == true) {
+    		graphPanel.updateTimeRecords(raw);
+    	}
     }
     
     /**
