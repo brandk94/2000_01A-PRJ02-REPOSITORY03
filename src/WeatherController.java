@@ -6,8 +6,8 @@ import java.util.Random;
 /**
  * Weather Controller class that extracts the data from the packets sent by WeatherStation.
  * Sends that data over to the WeatherGUI.
- * @author Group 6
- * Version January 26, 2020
+ * @author Group 3
+ * Version February 15, 2020
  */
 public class WeatherController implements Runnable {
 
@@ -88,6 +88,14 @@ public class WeatherController implements Runnable {
 	@Override
 	public void run() {
 		while(!Thread.interrupted()) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			Date date = new Date();
+			gui.setDate(date);
+			gui.setTime(date, false);
 			byte[] packet = station.getNext();
 			
 			int temp = extractTemp(packet);
@@ -97,7 +105,7 @@ public class WeatherController implements Runnable {
 			int winddir = extractWindDir(packet);
 			int moon = extractMoonPhase();
 			int rain = extractRain(packet);
-			Date date = new Date();
+			date = new Date();
 			int sunrise = extractSunrise(packet);
 			int sunset = extractSunset(packet);
 
@@ -108,7 +116,7 @@ public class WeatherController implements Runnable {
 			gui.setMoonPhase(moon);
 			gui.setRain(rain);
 			gui.setDate(date);
-			gui.setTime(date);
+			gui.setTime(date, true);
 			gui.setSunrise(sunrise);
 			gui.setSunset(sunset);
 			gui.graphTick();
