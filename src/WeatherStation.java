@@ -5,8 +5,8 @@ import java.util.Random;
 /**
  * A "proxy" class that simulates a physical weather station and generates packets of data.
  *
- * @author Group 6 Ilya B. Neil H. Jason L. Brandon K.
- * @version January 26, 2020
+ * @author  Group 6
+ * @version February 15, 2020
  */
 public class WeatherStation{
 	/**
@@ -193,7 +193,7 @@ public class WeatherStation{
 	 */
 	public byte[] getNext() {
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 			updateSensors();
 			
 			byte[] packet = new byte[99];
