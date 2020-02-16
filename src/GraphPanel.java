@@ -18,8 +18,8 @@ import javax.swing.JPanel;
 /**
  * The JPanel on which graph data can be displayed.
  * 
- * @author Group 6
- *
+ * @author  Group 3
+ * @version February 15, 2020
  */
 public class GraphPanel extends JPanel {
 	/**
@@ -89,9 +89,13 @@ public class GraphPanel extends JPanel {
 	 */
 	private List<double[]> lines;
 	/**
-	 * A circular buffer of the previous sensor values
+	 * A circular buffer of the previous sensor values of selected condition
 	 */
 	private List<Integer> prevVals;
+	/**
+	 * A circular buffer of time ticks of previously recorded values.
+	 */
+	private List<String> timeTicks;
 	/**
 	 * A circular buffer of the previous temperature values
 	 */
@@ -138,6 +142,10 @@ public class GraphPanel extends JPanel {
 				new double[]{0, 1-1.0/(NUM_DIVS+1), 1-1.0/(NUM_DIVS+1), 1-1.0/(NUM_DIVS+1)},
 				new double[]{1.0/(NUM_DIVS+1), 0, 1.0/(NUM_DIVS+1), 1-1.0/(NUM_DIVS+1)}));
 		
+		timeTicks = new ArrayList<>();
+		for (int i=0; i<NUM_DIVS; i++) {
+			timeTicks.add("");
+		}
 		tempVals = new ArrayList<>();
 		for (int i=0; i<NUM_DIVS; i++) {
 			tempVals.add(null);
@@ -190,6 +198,14 @@ public class GraphPanel extends JPanel {
 	}
 	
 	/**
+	 * Updates the time ticks on the graph
+	 * @param time The time tick
+	 */
+	public void updateTimeRecords(String time) {
+		timeTicks.set(index, time);
+	}
+	
+	/**
 	 * Update graph of display panel with value from the latest LOOP packet.
 	 */
 	public void updateDisplay() {
@@ -237,9 +253,12 @@ public class GraphPanel extends JPanel {
 		// draw the name of the sensor data type
 		g2d.translate(0, getHeight());
 		g2d.rotate(-Math.PI/2);
-		g2d.drawString(SENSOR_NAMES[sensorType], (float)(2*divH), (float)(divW/2));
+		g2d.drawString(SENSOR_NAMES[sensorType], (float)(5*divH), (float)(divW/3));
 		g2d.rotate(Math.PI/2);
 		g2d.translate(0, -getHeight());
+		
+		// draw the label "Time" on the x-axis of graph
+		g2d.drawString("Time", 30, (int) (divH*10.5));
 		
 		// draw the bars of the graph
 		int min = SENSOR_MINS[sensorType];
@@ -266,6 +285,8 @@ public class GraphPanel extends JPanel {
 						divW,
 						yOffset)
 					);
+				g2d.drawString(timeTicks.get((index+i)%NUM_DIVS), (int) (divW + i*divW), 
+						(int) (divH*10.5)); 
 			}
 		}
 		
@@ -281,9 +302,6 @@ public class GraphPanel extends JPanel {
 		if (type != sensorType) {
 			sensorType = type;
 			repaintGraph(sensorType);
-// 			for (int i=0; i<prevVals.size(); i++) {
-// 				prevVals.set(i, null);
-// 			}
 		}
 	}
 	
